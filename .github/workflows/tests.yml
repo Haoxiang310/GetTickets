@@ -1,9 +1,7 @@
 name: tests
 
 on: 
-  pull_request:
-    paths:
-      - 'auth/**'
+  pull_request
   
 jobs:
   build:
