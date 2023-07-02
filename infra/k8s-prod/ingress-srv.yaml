@@ -49,32 +49,22 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: do-loadbalancer
   annotations:
-    kubernetes.digitalocean.com/load-balancer-id: 'a4693ae5958c04adf821dd581963f4c9'
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: 'true'
     service.beta.kubernetes.io/do-loadbalancer-hostname: 'www.ticketing-app-prod.yachts'
-  labels:
-    helm.sh/chart: ingress-nginx-2.0.3
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/version: 0.32.0
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: controller
-  name: ingress-nginx-controller
-  namespace: ingress-nginx
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: 'true'
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Local
+  selector:
+    app: nginx-ingress
+    component: controller
   ports:
     - name: http
-      port: 80
       protocol: TCP
+      port: 80
       targetPort: http
     - name: https
-      port: 443
       protocol: TCP
+      port: 443
       targetPort: https
-  selector:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/component: controller
