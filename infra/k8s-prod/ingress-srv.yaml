@@ -10,6 +10,13 @@ spec:
     - host: www.ticketing-app-prod.yachts
       http:
         paths:
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: payments-srv
+                port:
+                  number: 3000
           - path: /api/users/?(.*)
             pathType: Prefix
             backend:
@@ -31,13 +38,6 @@ spec:
                 name: orders-srv
                 port:
                   number: 3000
-          - path: /api/payments/?(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: payments-srv
-                port:
-                  number: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:
@@ -49,22 +49,31 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: do-loadbalancer
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: 'true'
     service.beta.kubernetes.io/do-loadbalancer-hostname: 'www.ticketing-app-prod.yachts'
-    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: 'true'
+  labels:
+    helm.sh/chart: ingress-nginx-2.0.3
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/version: 0.32.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
 spec:
   type: LoadBalancer
-  selector:
-    app: nginx-ingress
-    component: controller
+  externalTrafficPolicy: Local
   ports:
     - name: http
-      protocol: TCP
       port: 80
+      protocol: TCP
       targetPort: http
     - name: https
-      protocol: TCP
       port: 443
+      protocol: TCP
       targetPort: https
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/component: controller
