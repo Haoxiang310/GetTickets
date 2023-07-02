@@ -1,18 +1,16 @@
-import axios from "axios";
+import axios from 'axios';
 
-const buildClient = ({ req }) => {
-  if (typeof window === "undefined") {
-    // We are on the server
-
+const buildClient =  ({ req }) => {
+  if(typeof window === 'undefined'){
     return axios.create({
       baseURL: "http://www.ticketing-app-prod.yachts",
-      headers: req.headers,
+      headers: req.headers
     });
-  } else {
-    // We must be on the browser
+  }
+  else{
     return axios.create({
-      baseUrl: "/",
-    });
+      baseURL: '/'
+    })
   }
 };
 
