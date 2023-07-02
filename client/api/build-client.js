@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default ({ req }) => {
+const buildClient =  ({ req }) => {
   if(typeof window === 'undefined'){
     return axios.create({
       baseURL: 'http://www.ticketing-app-prod.yachts',
@@ -13,3 +13,5 @@ export default ({ req }) => {
     })
   }
 };
+
+export default buildClient;
